@@ -1,0 +1,53 @@
+# This is a sample build configuration for Python.
+# Check our guides at https://confluence.atlassian.com/x/x4UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: continuumio/miniconda3
+
+options:
+  docker: true
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - apt-get update
+          - apt-get install -y make gcc g++
+          - conda install -c bioconda -c conda-forge -y mamba
+          - mamba install -c bioconda -c conda-forge -y fastqc vispr snakemake cutadapt jinja2 numpy scipy
+          # install the latest version of mageck
+          - mkdir mageck
+          - cd mageck
+          - git clone https://davidliwei@bitbucket.org/liulab/mageck.git
+          - cd mageck
+          - python setup.py install
+          - cd ../../
+          #- python setup.py sdist
+          - python setup.py install 
+          #- step:
+          #  script:
+          - cd test/esc-testdata
+          #- snakemake -F --cores 4
+          - cd ../esc-testdata2-counttable
+          - snakemake -F --cores 4
+          - cd ../esc-testdata3-day0  
+          - snakemake -F --cores 4
+          - cd ../esc-testdata4-rra
+          - snakemake -F --cores 4
+    - step:
+        script:
+          # build the Docker image
+          # - export IMAGE_NAME=davidliwei/mageck:$BITBUCKET_COMMIT
+          - export IMAGE_NAME=davidliwei/mageck-vispr:latest
+          - docker build -t $IMAGE_NAME .
+          # authenticate with Docker Hub
+          - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD 
+          - docker push $IMAGE_NAME
+          # build another image with current commit
+          - export IMAGE_NAME=davidliwei/mageck-vispr:$BITBUCKET_COMMIT
+          - docker build -t $IMAGE_NAME .
+          - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD 
+          - docker push $IMAGE_NAME
+
+

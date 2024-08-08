@@ -1,0 +1,31 @@
+package:
+  name: mageck-vispr
+  version: "0.4.5"
+source:
+  path: ../../
+build:
+  entry_points:
+    - mageck-vispr = mageck_vispr.cli:main
+requirements:
+  build:
+    - python
+    - setuptools
+    - snakemake
+    - mageck >=0.5.2
+    - vispr >=0.4.4
+    - fastqc
+    - cutadapt
+    - jinja2
+  run:
+    - python
+    - setuptools
+    - snakemake
+    - mageck #>=0.5.2
+    - vispr #>=0.4.4
+    - fastqc
+    - cutadapt
+    - jinja2
+about:
+  home: https://bitbucket.org/johanneskoester/vispr
+  license: MIT License
+  summary: MAGeCK-VISPR is a comprehensive quality control, analysis and visualization pipeline for CRISPR/Cas9 screens based on MAGeCK, VISPR, Snakemake and FastQC.

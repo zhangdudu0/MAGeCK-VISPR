@@ -1,0 +1,4 @@
+include mageck_vispr/config.yaml
+include mageck_vispr/Snakefile
+include mageck_vispr/README.txt
+include mageck_vispr/combat.R
